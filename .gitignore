@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build output
+build/
+dist/
+out/
+*.node
+!frameworks/**
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Env and local files
+.env
+.env.*
+*.local
+
+# Electron / signing
+*.p12
+*.provisionprofile
+
+# Disabled/backup copies (double-underscore prefix)
+__*
+!__tests__/

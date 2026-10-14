@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Syphon Control</title>
+    <style>
+      body {
+        font: 13px -apple-system, sans-serif;
+        margin: 0;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #f4f4f4;
+        user-select: none;
+      }
+      button {
+        font: inherit;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+        background: #fff;
+        cursor: pointer;
+      }
+      button.on {
+        background: #2e7d32;
+        border-color: #2e7d32;
+        color: #fff;
+      }
+      #status {
+        color: #555;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="syphon">Start Syphon</button>
+    <button id="window">Show window</button>
+    <button id="devtools">Toggle DevTools</button>
+    <div id="status">Syphon: off</div>
+    <script>
+      const { ipcRenderer } = require("electron");
+      const syphonBtn = document.getElementById("syphon");
+      const windowBtn = document.getElementById("window");
+      const status = document.getElementById("status");
+      let syphonOn = false;
+
+      syphonBtn.onclick = () => ipcRenderer.send("set-syphon", !syphonOn);
+      windowBtn.onclick = () => ipcRenderer.send("toggle-window");
+      document.getElementById("devtools").onclick = () => ipcRenderer.send("toggle-devtools");
+
+      ipcRenderer.on("syphon-state", (_e, state) => {
+        syphonOn = state.running;
+        syphonBtn.textContent = syphonOn ? "Stop Syphon" : "Start Syphon";
+        syphonBtn.classList.toggle("on", syphonOn);
+        status.textContent = state.error
+          ? "Syphon error: " + state.error
+          : "Syphon: " + (syphonOn ? "publishing “" + state.name + "”" : "off");
+      });
+      ipcRenderer.on("window-visible", (_e, visible) => {
+        windowBtn.textContent = visible ? "Hide window" : "Show window";
+      });
+
+      ipcRenderer.send("control-ready");
+    </script>
+  </body>
+</html>
